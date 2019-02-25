@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import List from './components/List'
 
 const client = new ApolloClient({
-  uri: 'http://192.168.42.24:4000'
+  uri: 'http://192.168.100.99:4000'
 })
 
 const TASK_QUERY = gql`
@@ -47,8 +47,10 @@ export default class App extends React.Component {
   render() {
     const { tasks } = this.state
     return (
-      <ApolloProvider client={client} style={styles.container}>
-        <List list={ tasks } onPressItem={this.onRemoveTask} />
+      <ApolloProvider client={client}>
+        <View style={styles.container}>
+          <List />
+        </View>
       </ApolloProvider>
     );
   }
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: 'center',
   },
 });

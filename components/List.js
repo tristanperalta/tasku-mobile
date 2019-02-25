@@ -1,38 +1,40 @@
 import React, { Component } from 'react'
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
-const TASK_QUERY = gql`
-  query GetAllTasks {
-    tasks {
-      note
-      createAt
-    }
+const GET_ALL_TASKS = gql`
+query GetAllTasks {
+  tasks{
+    note
+    createdAt
+    doneAt
   }
+}
 `
 
 export default class List extends Component {
 
-  renderItem = (text, i) => {
-    const {onPressItem} = this.props
-
+  renderItem = (note, i) => {
     return (
       <TouchableOpacity
-        key={text}
-        style={styles.item}
-        onPress={() => onPressItem(i)} >
-        <Text>{text}</Text>
+        key={i}
+        style={styles.item}>
+        <Text>{note}</Text>
       </TouchableOpacity>
     )
   }
 
   render() {
-    const {list} = this.props
-
+    let self = this
     return (
-      <View>
-        {list.map(this.renderItem)}
-      </View>
+      <Query query={GET_ALL_TASKS}>
+        {({ loading, error, data }) => {
+          if (loading) return(<Text>{"Its loading"}</Text>)
+          if (error) return(<Text>{"Error"}</Text>)
+          return data.tasks.map((task, i) => self.renderItem(task.note, i))
+        }}
+      </Query>
     )
   }
 }
